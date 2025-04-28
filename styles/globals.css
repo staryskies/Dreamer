@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-rgb: 30, 30, 30;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* Editor specific styles */
+.editor-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-tabs {
+  display: flex;
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #333;
+}
+
+.editor-tab {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.editor-tab.active {
+  background-color: #2d2d2d;
+  color: white;
+  border-bottom: 2px solid #0070f3;
+}
+
+.editor-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-container {
+  border-top: 1px solid #333;
+  background-color: white;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .editor-container {
+    flex-direction: column;
+  }
+  
+  .editor-content {
+    height: 50vh;
+  }
+  
+  .preview-container {
+    height: 50vh;
+  }
+}
