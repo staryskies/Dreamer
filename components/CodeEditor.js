@@ -79,6 +79,7 @@ export default function CodeEditor() {
         body: JSON.stringify({
           code,
           changes: prompt,
+          changesWanted: prompt,
           codeType
         }),
       })

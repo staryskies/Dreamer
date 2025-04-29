@@ -47,16 +47,24 @@ function processMagicLoopResponse(response, originalCode) {
     // Split the original code into lines for comparison
     const originalLines = originalCode.split('\n')
 
-    // If the response has a 'code' property, it's the new simplified API format
-    if (response && response.code && typeof response.code === 'string') {
-      const newCode = response.code
-      const newLines = newCode.split('\n')
-      const suggestions = []
+    // Check for the new format with modifiedCode property
+    if (response && response.modifiedCode && typeof response.modifiedCode === 'string') {
+      // Extract the code from the markdown-like format if needed
+      let newCode = response.modifiedCode;
+
+      // If the code is wrapped in markdown code blocks, extract it
+      const codeBlockMatch = newCode.match(/```(?:html|css|js|javascript)?\s*([\s\S]*?)\s*```/);
+      if (codeBlockMatch && codeBlockMatch[1]) {
+        newCode = codeBlockMatch[1];
+      }
+
+      const newLines = newCode.split('\n');
+      const suggestions = [];
 
       // Compare original lines with new lines to find changes
       for (let i = 0; i < Math.max(originalLines.length, newLines.length); i++) {
-        const oldLine = i < originalLines.length ? originalLines[i] : ''
-        const newLine = i < newLines.length ? newLines[i] : ''
+        const oldLine = i < originalLines.length ? originalLines[i] : '';
+        const newLine = i < newLines.length ? newLines[i] : '';
 
         // If the lines are different, create a suggestion
         if (oldLine !== newLine) {
@@ -65,12 +73,39 @@ function processMagicLoopResponse(response, originalCode) {
             oldCode: oldLine,
             newCode: newLine,
             explanation: `Changed line ${i + 1}`
-          })
+          });
         }
       }
 
       if (suggestions.length > 0) {
-        return suggestions
+        return suggestions;
+      }
+    }
+
+    // If the response has a 'code' property, it's the previous simplified API format
+    if (response && response.code && typeof response.code === 'string') {
+      const newCode = response.code;
+      const newLines = newCode.split('\n');
+      const suggestions = [];
+
+      // Compare original lines with new lines to find changes
+      for (let i = 0; i < Math.max(originalLines.length, newLines.length); i++) {
+        const oldLine = i < originalLines.length ? originalLines[i] : '';
+        const newLine = i < newLines.length ? newLines[i] : '';
+
+        // If the lines are different, create a suggestion
+        if (oldLine !== newLine) {
+          suggestions.push({
+            lineNumber: i + 1,
+            oldCode: oldLine,
+            newCode: newLine,
+            explanation: `Changed line ${i + 1}`
+          });
+        }
+      }
+
+      if (suggestions.length > 0) {
+        return suggestions;
       }
     }
 

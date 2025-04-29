@@ -45,17 +45,17 @@ The API accepts POST requests with the following JSON body:
 }
 ```
 
-The API returns the complete modified code in the following format:
+The API returns the modified code in the following format:
 ```json
 {
-  "code": "def subtract(a, b):\n    return a - b"
+  "modifiedCode": "```html\n<div class=\"container\" style=\"background-color: #121212; color: #ffffff;\">\n  <h1>Bob is fun</h1>\n  <p>Start editing to see some magic happen!</p>\n</div>\n```"
 }
 ```
 
 The response contains:
-- `code`: The complete modified code with all changes applied
+- `modifiedCode`: The complete modified code with all changes applied, sometimes wrapped in markdown code blocks
 
-This simplified approach makes it easier to apply changes to the entire codebase at once.
+This simplified approach makes it easier to apply changes to the entire codebase at once. The code is automatically extracted from any markdown formatting before being processed.
 
 ## Mobile Compatibility
 
