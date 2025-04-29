@@ -105,27 +105,42 @@ export default function CodeEditor() {
 
     const { codeType } = suggestions
 
-    // Sort suggestions by line number in descending order to avoid offset issues
-    const sortedSuggestions = [...acceptedSuggestions].sort((a, b) => b.lineNumber - a.lineNumber)
+    // If all suggestions are selected, we can just apply the entire new code
+    // This is more reliable than applying line by line
+    if (acceptedSuggestions.length > 0) {
+      // Get the current code
+      let currentCode = codeType === 'html' ? html : codeType === 'css' ? css : js
 
-    let updatedCode = codeType === 'html' ? html : codeType === 'css' ? css : js
+      // Create a new array of lines that will be our final code
+      let lines = currentCode.split('\n')
 
-    // Apply each suggestion
-    sortedSuggestions.forEach(suggestion => {
-      const lines = updatedCode.split('\n')
-      if (suggestion.lineNumber > 0 && suggestion.lineNumber <= lines.length) {
-        lines[suggestion.lineNumber - 1] = suggestion.newCode
-        updatedCode = lines.join('\n')
+      // Sort suggestions by line number in ascending order
+      const sortedSuggestions = [...acceptedSuggestions].sort((a, b) => a.lineNumber - b.lineNumber)
+
+      // Apply each suggestion
+      sortedSuggestions.forEach(suggestion => {
+        if (suggestion.lineNumber > 0 && suggestion.lineNumber <= lines.length + 1) {
+          // If the line number is within range, replace it
+          if (suggestion.lineNumber <= lines.length) {
+            lines[suggestion.lineNumber - 1] = suggestion.newCode
+          } else {
+            // If it's a new line at the end
+            lines.push(suggestion.newCode)
+          }
+        }
+      })
+
+      // Join the lines back into a single string
+      const updatedCode = lines.join('\n')
+
+      // Update the appropriate state
+      if (codeType === 'html') {
+        setHtml(updatedCode)
+      } else if (codeType === 'css') {
+        setCss(updatedCode)
+      } else if (codeType === 'js') {
+        setJs(updatedCode)
       }
-    })
-
-    // Update the appropriate state
-    if (codeType === 'html') {
-      setHtml(updatedCode)
-    } else if (codeType === 'css') {
-      setCss(updatedCode)
-    } else if (codeType === 'js') {
-      setJs(updatedCode)
     }
 
     // Clear suggestions

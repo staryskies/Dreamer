@@ -6,12 +6,12 @@ export default async function handler(req, res) {
   try {
     const { code, changes, codeType } = req.body
 
-    if (!code || !codeType) {
-      return res.status(400).json({ error: 'Missing required fields' })
+    if (!code) {
+      return res.status(400).json({ error: 'Missing required code field' })
     }
 
-    // Call Magic Loop API
-    const url = 'https://magicloops.dev/api/loop/02d4a8e6-d9d8-4335-9d44-ec31f5d677f7/run'
+    // Call Magic Loop API with the simplified endpoint
+    const url = 'https://magicloops.dev/api/loop/3d4346c0-56b5-49d4-9144-04ef31c603e1/run'
 
     const response = await fetch(url, {
       method: 'POST',
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         code,
-        changes: changes || `Improve this ${codeType} code`,
+        changesWanted: changes || `Improve this ${codeType || 'code'}`,
       }),
     })
 
@@ -47,28 +47,10 @@ function processMagicLoopResponse(response, originalCode) {
     // Split the original code into lines for comparison
     const originalLines = originalCode.split('\n')
 
-    // Handle the new Magic Loop API response format with line_number, original_line, and new_line
-    if (Array.isArray(response)) {
-      const suggestions = response.map(change => {
-        // Adjust for 0-based vs 1-based indexing if needed
-        const lineNumber = change.line_number || 1
-
-        return {
-          lineNumber,
-          oldCode: change.original_line || (lineNumber <= originalLines.length ? originalLines[lineNumber - 1] : ''),
-          newCode: change.new_line || '',
-          explanation: `Changed line ${lineNumber}`
-        }
-      })
-
-      if (suggestions.length > 0) {
-        return suggestions
-      }
-    }
-
-    // Handle the previous Magic Loop API format which returns full code
+    // If the response has a 'code' property, it's the new simplified API format
     if (response && response.code && typeof response.code === 'string') {
-      const newLines = response.code.split('\n')
+      const newCode = response.code
+      const newLines = newCode.split('\n')
       const suggestions = []
 
       // Compare original lines with new lines to find changes
@@ -86,6 +68,24 @@ function processMagicLoopResponse(response, originalCode) {
           })
         }
       }
+
+      if (suggestions.length > 0) {
+        return suggestions
+      }
+    }
+
+    // Handle the line-by-line format if present
+    if (Array.isArray(response)) {
+      const suggestions = response.map(change => {
+        const lineNumber = change.line_number || 1
+
+        return {
+          lineNumber,
+          oldCode: change.original_line || (lineNumber <= originalLines.length ? originalLines[lineNumber - 1] : ''),
+          newCode: change.new_line || '',
+          explanation: `Changed line ${lineNumber}`
+        }
+      })
 
       if (suggestions.length > 0) {
         return suggestions

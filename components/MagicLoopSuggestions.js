@@ -23,7 +23,12 @@ export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, e
 
   // Apply selected suggestions
   const handleApply = () => {
-    onApply(selectedSuggestions)
+    // If no suggestions are selected, apply all of them
+    if (selectedSuggestions.length === 0 && suggestions && suggestions.length > 0) {
+      onApply(suggestions)
+    } else {
+      onApply(selectedSuggestions)
+    }
   }
 
   if (error) {
@@ -65,15 +70,10 @@ export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, e
           )}
           <button
             onClick={handleApply}
-            className={`px-3 py-1 rounded-md mr-2 text-xs smooth-transition ${
-              selectedSuggestions.length === 0
-                ? 'bg-gray-600 cursor-not-allowed'
-                : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500'
-            }`}
-            disabled={selectedSuggestions.length === 0}
-            style={{boxShadow: selectedSuggestions.length === 0 ? 'none' : '0 0 8px rgba(16, 185, 129, 0.3)'}}
+            className="px-3 py-1 rounded-md mr-2 text-xs smooth-transition bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500"
+            style={{boxShadow: '0 0 8px rgba(16, 185, 129, 0.3)'}}
           >
-            Apply ({selectedSuggestions.length})
+            {selectedSuggestions.length === 0 ? 'Apply All' : `Apply (${selectedSuggestions.length})`}
           </button>
           <button
             onClick={onCancel}
