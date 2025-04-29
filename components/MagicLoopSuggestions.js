@@ -93,7 +93,7 @@ export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, e
         </div>
       </div>
 
-      <div className="p-2 md:p-4 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+      <div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
         {suggestions && suggestions.length > 0 ? (
           suggestions.map((suggestion, index) => (
             <div
@@ -137,21 +137,21 @@ export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, e
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-2">
                   <div>
                     <h4 className="text-xs font-medium text-gray-400 mb-0.5">Original:</h4>
-                    <div className="bg-gray-900 p-1.5 rounded overflow-x-auto border border-gray-700 max-h-24 md:max-h-32">
+                    <div className="bg-gray-900 p-1.5 rounded overflow-x-auto overflow-y-auto border border-gray-700 max-h-32 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
                       <pre className="whitespace-pre-wrap break-all text-gray-300 text-xs">{suggestion.oldCode || "(empty line)"}</pre>
                     </div>
                   </div>
 
                   <div>
                     <h4 className="text-xs font-medium text-gray-400 mb-0.5">Suggested:</h4>
-                    <div className="bg-gray-900 p-1.5 rounded overflow-x-auto border border-gray-700 max-h-24 md:max-h-32">
+                    <div className="bg-gray-900 p-1.5 rounded overflow-x-auto overflow-y-auto border border-gray-700 max-h-32 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
                       <pre className="whitespace-pre-wrap break-all text-yellow-100 text-xs">{suggestion.newCode || "(delete line)"}</pre>
                     </div>
                   </div>
                 </div>
 
                 {suggestion.explanation && suggestion.explanation !== `Changed line ${suggestion.lineNumber}` && (
-                  <div className="mt-1 text-xs text-blue-300 italic bg-gray-900 p-1.5 rounded border border-gray-700 max-h-16 overflow-y-auto">
+                  <div className="mt-1 text-xs text-blue-300 italic bg-gray-900 p-1.5 rounded border border-gray-700 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
                     <span className="text-yellow-400 mr-1">✨</span>
                     {suggestion.explanation}
                   </div>
