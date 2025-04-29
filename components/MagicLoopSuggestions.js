@@ -21,7 +21,7 @@ export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, e
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           <p>Error: {error}</p>
         </div>
-        <button 
+        <button
           onClick={onCancel}
           className="px-4 py-2 bg-gray-600 text-white rounded-md self-start"
         >
@@ -33,17 +33,17 @@ export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, e
 
   return (
     <div className="h-full flex flex-col bg-gray-100 overflow-auto">
-      <div className="bg-gray-800 text-white px-4 py-2 flex justify-between items-center sticky top-0">
+      <div className="bg-gray-800 text-white px-4 py-2 flex justify-between items-center">
         <h3>AI Suggestions</h3>
         <div>
-          <button 
+          <button
             onClick={handleApply}
             className="px-4 py-1 bg-green-600 hover:bg-green-700 rounded-md mr-2 text-sm"
             disabled={selectedSuggestions.length === 0}
           >
             Apply Selected ({selectedSuggestions.length})
           </button>
-          <button 
+          <button
             onClick={onCancel}
             className="px-4 py-1 bg-gray-600 hover:bg-gray-700 rounded-md text-sm"
           >
@@ -51,17 +51,13 @@ export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, e
           </button>
         </div>
       </div>
-      
+
       <div className="p-4 overflow-auto">
         {suggestions && suggestions.length > 0 ? (
           suggestions.map((suggestion, index) => (
-            <div 
-              key={index} 
-              className={`mb-4 p-4 rounded-lg border ${
-                selectedSuggestions.some(s => s.lineNumber === suggestion.lineNumber)
-                  ? 'border-green-500 bg-green-50'
-                  : 'border-gray-300 bg-white'
-              }`}
+            <div
+              key={index}
+              className="mb-4 p-4 rounded-lg border border-gray-300 bg-white"
             >
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold">Line {suggestion.lineNumber}</span>
@@ -75,28 +71,18 @@ export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, e
                   Select
                 </label>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-1">Original:</h4>
-                  <pre className="bg-gray-100 p-2 rounded overflow-x-auto text-sm">
-                    {suggestion.oldCode}
-                  </pre>
+
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 mb-1">Original:</h4>
+                <div className="bg-gray-100 p-2 rounded mb-2 overflow-x-auto">
+                  <code>{suggestion.oldCode}</code>
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-1">Suggested:</h4>
-                  <pre className="bg-gray-100 p-2 rounded overflow-x-auto text-sm">
-                    {suggestion.newCode}
-                  </pre>
+
+                <h4 className="text-sm font-medium text-gray-500 mb-1">Suggested:</h4>
+                <div className="bg-gray-100 p-2 rounded overflow-x-auto">
+                  <code>{suggestion.newCode}</code>
                 </div>
               </div>
-              
-              {suggestion.explanation && (
-                <div className="mt-2">
-                  <h4 className="text-sm font-medium text-gray-500 mb-1">Explanation:</h4>
-                  <p className="text-sm text-gray-700">{suggestion.explanation}</p>
-                </div>
-              )}
             </div>
           ))
         ) : (
