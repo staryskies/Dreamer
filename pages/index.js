@@ -19,19 +19,19 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Head>
         <title>Web Code Editor</title>
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
 
-      <header className="bg-gray-800 text-white p-4">
-        <h1 className="text-xl font-bold">Web Code Editor</h1>
+      <header className="bg-gray-800 text-white p-2 md:p-4">
+        <h1 className="text-lg md:text-xl font-bold">Web Code Editor</h1>
       </header>
 
       <main className="flex-1 overflow-hidden">
         {mounted && <CodeEditor />}
       </main>
 
-      <footer className="bg-gray-800 text-white p-2 text-center text-sm">
-        <p>Web Code Editor with Magic Loop AI Integration</p>
+      <footer className="bg-gray-800 text-white p-1 md:p-2 text-center text-xs md:text-sm">
+        <p>Web Code Editor with Magic Loop AI</p>
       </footer>
     </div>
   )

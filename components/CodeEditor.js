@@ -45,6 +45,9 @@ export default function CodeEditor() {
     }
   }, [html, css, js])
 
+  // State for AI prompt
+  const [aiPrompt, setAiPrompt] = useState('')
+
   // Get suggestions from Magic Loop AI
   const getSuggestions = async (codeType) => {
     setIsLoading(true)
@@ -52,20 +55,17 @@ export default function CodeEditor() {
 
     try {
       let code = ''
-      let prompt = ''
+      let prompt = aiPrompt || 'Improve this code'
 
       switch (codeType) {
         case 'html':
           code = html
-          prompt = 'Improve the HTML structure and semantics'
           break
         case 'css':
           code = css
-          prompt = 'Enhance the CSS styling and responsiveness'
           break
         case 'js':
           code = js
-          prompt = 'Optimize the JavaScript code and functionality'
           break
         default:
           throw new Error('Invalid code type')
@@ -142,28 +142,39 @@ export default function CodeEditor() {
       {/* Editor Section */}
       <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col">
         {/* Editor Tabs */}
-        <div className="flex bg-gray-800 text-white">
-          <button
-            className={`px-4 py-2 ${activeTab === 'html' ? 'bg-gray-700 border-b-2 border-blue-500' : ''}`}
-            onClick={() => handleTabChange('html')}
-          >
-            HTML
-          </button>
-          <button
-            className={`px-4 py-2 ${activeTab === 'css' ? 'bg-gray-700 border-b-2 border-blue-500' : ''}`}
-            onClick={() => handleTabChange('css')}
-          >
-            CSS
-          </button>
-          <button
-            className={`px-4 py-2 ${activeTab === 'js' ? 'bg-gray-700 border-b-2 border-blue-500' : ''}`}
-            onClick={() => handleTabChange('js')}
-          >
-            JS
-          </button>
-          <div className="ml-auto">
+        <div className="flex flex-col bg-gray-800 text-white">
+          <div className="flex">
             <button
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md mr-2"
+              className={`px-4 py-2 ${activeTab === 'html' ? 'bg-gray-700 border-b-2 border-blue-500' : ''}`}
+              onClick={() => handleTabChange('html')}
+            >
+              HTML
+            </button>
+            <button
+              className={`px-4 py-2 ${activeTab === 'css' ? 'bg-gray-700 border-b-2 border-blue-500' : ''}`}
+              onClick={() => handleTabChange('css')}
+            >
+              CSS
+            </button>
+            <button
+              className={`px-4 py-2 ${activeTab === 'js' ? 'bg-gray-700 border-b-2 border-blue-500' : ''}`}
+              onClick={() => handleTabChange('js')}
+            >
+              JS
+            </button>
+          </div>
+
+          {/* AI Prompt Input */}
+          <div className="flex p-2 bg-gray-700">
+            <input
+              type="text"
+              placeholder="Enter instructions for AI (e.g., 'Add a dark mode toggle')"
+              className="flex-1 px-2 py-1 text-sm text-black rounded-l"
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+            />
+            <button
+              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded-r text-sm"
               onClick={() => getSuggestions(activeTab)}
               disabled={isLoading}
             >
