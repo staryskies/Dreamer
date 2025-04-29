@@ -138,53 +138,61 @@ export default function CodeEditor() {
   }
 
   return (
-    <div className="h-full flex flex-col md:flex-row">
-      {/* Editor Section */}
-      <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col">
-        {/* Editor Tabs */}
-        <div className="flex flex-col bg-gray-800 text-white">
-          <div className="flex">
-            <button
-              className={`px-4 py-2 ${activeTab === 'html' ? 'bg-gray-700 border-b-2 border-blue-500' : ''}`}
-              onClick={() => handleTabChange('html')}
-            >
-              HTML
-            </button>
-            <button
-              className={`px-4 py-2 ${activeTab === 'css' ? 'bg-gray-700 border-b-2 border-blue-500' : ''}`}
-              onClick={() => handleTabChange('css')}
-            >
-              CSS
-            </button>
-            <button
-              className={`px-4 py-2 ${activeTab === 'js' ? 'bg-gray-700 border-b-2 border-blue-500' : ''}`}
-              onClick={() => handleTabChange('js')}
-            >
-              JS
-            </button>
-          </div>
+    <div className="h-full flex flex-col" style={{animation: 'fadeIn 0.5s ease-out'}}>
+      {/* Top Bar with Tabs */}
+      <div className="flex bg-gray-900 text-white shadow-md">
+        <button
+          className={`px-3 py-2 text-sm smooth-transition ${activeTab === 'html'
+            ? 'bg-gray-800 border-b-2 gilded-text font-medium'
+            : 'hover:bg-gray-800'}`}
+          onClick={() => handleTabChange('html')}
+        >
+          HTML
+        </button>
+        <button
+          className={`px-3 py-2 text-sm smooth-transition ${activeTab === 'css'
+            ? 'bg-gray-800 border-b-2 gilded-text font-medium'
+            : 'hover:bg-gray-800'}`}
+          onClick={() => handleTabChange('css')}
+        >
+          CSS
+        </button>
+        <button
+          className={`px-3 py-2 text-sm smooth-transition ${activeTab === 'js'
+            ? 'bg-gray-800 border-b-2 gilded-text font-medium'
+            : 'hover:bg-gray-800'}`}
+          onClick={() => handleTabChange('js')}
+        >
+          JS
+        </button>
+      </div>
 
-          {/* AI Prompt Input */}
-          <div className="flex p-2 bg-gray-700">
-            <input
-              type="text"
-              placeholder="Enter instructions for AI (e.g., 'Add a dark mode toggle')"
-              className="flex-1 px-2 py-1 text-sm text-black rounded-l"
-              value={aiPrompt}
-              onChange={(e) => setAiPrompt(e.target.value)}
-            />
-            <button
-              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded-r text-sm"
-              onClick={() => getSuggestions(activeTab)}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Loading...' : 'Get AI Suggestions'}
-            </button>
-          </div>
-        </div>
+      {/* AI Prompt Input */}
+      <div className="flex p-2 bg-gray-800 text-white shadow-md gilded-border">
+        <input
+          type="text"
+          placeholder="✨ Ask Dreamer to enhance your code (e.g., 'add a dark mode toggle')"
+          className="flex-1 px-3 py-1.5 text-sm bg-gray-900 border border-gray-700 rounded-l focus:outline-none focus:ring-1 focus:ring-yellow-500 smooth-transition"
+          value={aiPrompt}
+          onChange={(e) => setAiPrompt(e.target.value)}
+        />
+        <button
+          className={`px-3 py-1.5 text-sm rounded-r smooth-transition ${isLoading
+            ? 'bg-gray-600 cursor-not-allowed'
+            : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500'}`}
+          onClick={() => getSuggestions(activeTab)}
+          disabled={isLoading}
+          style={{boxShadow: isLoading ? 'none' : '0 0 10px rgba(79, 70, 229, 0.4)'}}
+        >
+          {isLoading ? 'Dreaming...' : '✨ Get AI Suggestions'}
+        </button>
+      </div>
 
-        {/* Editor Content */}
-        <div className="flex-1 overflow-hidden">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col md:flex-row">
+        {/* Editor Section */}
+        <div className="w-full md:w-1/2 h-1/2 md:h-full bg-gray-900 smooth-transition"
+             style={{animation: 'slideIn 0.3s ease-out'}}>
           {activeTab === 'html' && (
             <CodeMirrorEditor
               value={html}
@@ -207,20 +215,21 @@ export default function CodeEditor() {
             />
           )}
         </div>
-      </div>
 
-      {/* Preview and Suggestions Section */}
-      <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col">
-        {suggestions ? (
-          <MagicLoopSuggestions
-            suggestions={suggestions.suggestions}
-            onApply={applySuggestions}
-            onCancel={() => setSuggestions(null)}
-            error={error}
-          />
-        ) : (
-          <Preview html={html} css={css} js={js} />
-        )}
+        {/* Right Panel */}
+        <div className="w-full md:w-1/2 h-1/2 md:h-full border-t md:border-t-0 md:border-l border-gray-700 bg-gray-900 smooth-transition"
+             style={{animation: 'slideIn 0.3s ease-out 0.1s both'}}>
+          {suggestions ? (
+            <MagicLoopSuggestions
+              suggestions={suggestions.suggestions}
+              onApply={applySuggestions}
+              onCancel={() => setSuggestions(null)}
+              error={error}
+            />
+          ) : (
+            <Preview html={html} css={css} js={js} />
+          )}
+        </div>
       </div>
     </div>
   )

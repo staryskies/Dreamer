@@ -34,7 +34,7 @@ To run the project locally:
 
 This project uses Magic Loop AI to provide code suggestions. The API endpoint is:
 ```
-https://magicloops.dev/api/loop/c5965f01-dd08-4632-92e4-7c2ab932d6bf/run
+https://magicloops.dev/api/loop/02d4a8e6-d9d8-4335-9d44-ec31f5d677f7/run
 ```
 
 The API accepts POST requests with the following JSON body:

@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     }
 
     // Call Magic Loop API
-    const url = 'https://magicloops.dev/api/loop/c5965f01-dd08-4632-92e4-7c2ab932d6bf/run'
+    const url = 'https://magicloops.dev/api/loop/02d4a8e6-d9d8-4335-9d44-ec31f5d677f7/run'
 
     const response = await fetch(url, {
       method: 'POST',
