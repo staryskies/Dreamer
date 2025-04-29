@@ -34,7 +34,7 @@ To run the project locally:
 
 This project uses Magic Loop AI to provide code suggestions. The API endpoint is:
 ```
-https://magicloops.dev/api/loop/559a78ca-8607-494f-8d39-ea002ea5b46c/run
+https://magicloops.dev/api/loop/c5965f01-dd08-4632-92e4-7c2ab932d6bf/run
 ```
 
 The API accepts POST requests with the following JSON body:
@@ -44,6 +44,22 @@ The API accepts POST requests with the following JSON body:
   "changes": "Description of changes to make"
 }
 ```
+
+The API returns an array of suggested changes in the following format:
+```json
+[
+  {
+    "line_number": 2,
+    "original_line": "print('Goodbye, world!')",
+    "new_line": "print('Farewell, world!')"
+  }
+]
+```
+
+Each suggestion includes:
+- `line_number`: The line number to change (1-based)
+- `original_line`: The original content of the line
+- `new_line`: The suggested new content for the line
 
 ## Mobile Compatibility
 

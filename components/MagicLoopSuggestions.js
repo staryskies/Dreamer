@@ -96,17 +96,23 @@ export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, e
                   <div className="flex-1 mb-2 md:mb-0">
                     <h4 className="text-xs font-medium text-gray-500 mb-1">Original:</h4>
                     <div className="bg-gray-100 p-1 rounded overflow-x-auto">
-                      <code>{suggestion.oldCode || "(empty line)"}</code>
+                      <pre className="whitespace-pre-wrap break-all">{suggestion.oldCode || "(empty line)"}</pre>
                     </div>
                   </div>
 
                   <div className="flex-1">
                     <h4 className="text-xs font-medium text-gray-500 mb-1">Suggested:</h4>
                     <div className="bg-gray-100 p-1 rounded overflow-x-auto">
-                      <code>{suggestion.newCode || "(delete line)"}</code>
+                      <pre className="whitespace-pre-wrap break-all">{suggestion.newCode || "(delete line)"}</pre>
                     </div>
                   </div>
                 </div>
+
+                {suggestion.explanation && suggestion.explanation !== `Changed line ${suggestion.lineNumber}` && (
+                  <div className="mt-2 text-xs text-gray-600 italic">
+                    {suggestion.explanation}
+                  </div>
+                )}
               </div>
             </div>
           ))

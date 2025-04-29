@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     }
 
     // Call Magic Loop API
-    const url = 'https://magicloops.dev/api/loop/559a78ca-8607-494f-8d39-ea002ea5b46c/run'
+    const url = 'https://magicloops.dev/api/loop/c5965f01-dd08-4632-92e4-7c2ab932d6bf/run'
 
     const response = await fetch(url, {
       method: 'POST',
@@ -29,6 +29,7 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json()
+    console.log('Magic Loop API response:', JSON.stringify(data, null, 2))
 
     // Process the response to match our expected format
     const suggestions = processMagicLoopResponse(data, code)
@@ -46,8 +47,27 @@ function processMagicLoopResponse(response, originalCode) {
     // Split the original code into lines for comparison
     const originalLines = originalCode.split('\n')
 
-    // Handle the Magic Loop API response format which returns full code
-    if (response.code && typeof response.code === 'string') {
+    // Handle the new Magic Loop API response format with line_number, original_line, and new_line
+    if (Array.isArray(response)) {
+      const suggestions = response.map(change => {
+        // Adjust for 0-based vs 1-based indexing if needed
+        const lineNumber = change.line_number || 1
+
+        return {
+          lineNumber,
+          oldCode: change.original_line || (lineNumber <= originalLines.length ? originalLines[lineNumber - 1] : ''),
+          newCode: change.new_line || '',
+          explanation: `Changed line ${lineNumber}`
+        }
+      })
+
+      if (suggestions.length > 0) {
+        return suggestions
+      }
+    }
+
+    // Handle the previous Magic Loop API format which returns full code
+    if (response && response.code && typeof response.code === 'string') {
       const newLines = response.code.split('\n')
       const suggestions = []
 
