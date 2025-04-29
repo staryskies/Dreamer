@@ -1,14 +1,19 @@
+import { trackUsage } from '../../lib/storage'
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    const { code, changes, codeType } = req.body
+    const { code, changes, codeType, projectId } = req.body
 
     if (!code) {
       return res.status(400).json({ error: 'Missing required code field' })
     }
+
+    // Track API usage
+    trackUsage(projectId)
 
     // Call Magic Loop API with the simplified endpoint
     const url = 'https://magicloops.dev/api/loop/3d4346c0-56b5-49d4-9144-04ef31c603e1/run'
@@ -58,6 +63,17 @@ function processMagicLoopResponse(response, originalCode) {
         newCode = codeBlockMatch[1];
       }
 
+      // If original code is empty or just whitespace, treat the entire response as new code
+      if (!originalCode.trim()) {
+        // Return the entire new code as a single suggestion
+        return [{
+          lineNumber: 1,
+          oldCode: '',
+          newCode: newCode,
+          explanation: 'AI generated new code'
+        }];
+      }
+
       const newLines = newCode.split('\n');
       const suggestions = [];
 
@@ -85,6 +101,18 @@ function processMagicLoopResponse(response, originalCode) {
     // If the response has a 'code' property, it's the previous simplified API format
     if (response && response.code && typeof response.code === 'string') {
       const newCode = response.code;
+
+      // If original code is empty or just whitespace, treat the entire response as new code
+      if (!originalCode.trim()) {
+        // Return the entire new code as a single suggestion
+        return [{
+          lineNumber: 1,
+          oldCode: '',
+          newCode: newCode,
+          explanation: 'AI generated new code'
+        }];
+      }
+
       const newLines = newCode.split('\n');
       const suggestions = [];
 

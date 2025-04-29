@@ -7,11 +7,11 @@ const DEFAULT_HTML = '<div class="container">\n  <h1>Hello World</h1>\n  <p>Star
 const DEFAULT_CSS = '.container {\n  font-family: sans-serif;\n  max-width: 800px;\n  margin: 0 auto;\n  padding: 2rem;\n}\n\nh1 {\n  color: #0070f3;\n}'
 const DEFAULT_JS = 'console.log("Hello from JavaScript!");\n\n// Add your JavaScript code here\ndocument.querySelector("h1").addEventListener("click", () => {\n  alert("You clicked the heading!");\n});'
 
-export default function CodeEditor() {
+export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave, projectId }) {
   // State for editor content
-  const [html, setHtml] = useState(DEFAULT_HTML)
-  const [css, setCss] = useState(DEFAULT_CSS)
-  const [js, setJs] = useState(DEFAULT_JS)
+  const [html, setHtml] = useState(initialHtml || DEFAULT_HTML)
+  const [css, setCss] = useState(initialCss || DEFAULT_CSS)
+  const [js, setJs] = useState(initialJs || DEFAULT_JS)
   const [activeTab, setActiveTab] = useState('html')
 
   // State for Magic Loop suggestions
@@ -19,31 +19,46 @@ export default function CodeEditor() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // Load saved code from localStorage on mount
+  // Auto-save when code changes (if onSave is provided)
   useEffect(() => {
-    try {
-      const savedHtml = localStorage.getItem('editor-html')
-      const savedCss = localStorage.getItem('editor-css')
-      const savedJs = localStorage.getItem('editor-js')
+    if (onSave) {
+      const saveTimer = setTimeout(() => {
+        onSave(html, css, js)
+      }, 2000) // Auto-save after 2 seconds of inactivity
 
-      if (savedHtml) setHtml(savedHtml)
-      if (savedCss) setCss(savedCss)
-      if (savedJs) setJs(savedJs)
-    } catch (err) {
-      console.error('Error loading from localStorage:', err)
+      return () => clearTimeout(saveTimer)
     }
-  }, [])
+  }, [html, css, js, onSave])
 
-  // Save code to localStorage when it changes
+  // If no project is loaded, use localStorage for persistence
   useEffect(() => {
-    try {
-      localStorage.setItem('editor-html', html)
-      localStorage.setItem('editor-css', css)
-      localStorage.setItem('editor-js', js)
-    } catch (err) {
-      console.error('Error saving to localStorage:', err)
+    if (!projectId) {
+      try {
+        const savedHtml = localStorage.getItem('editor-html')
+        const savedCss = localStorage.getItem('editor-css')
+        const savedJs = localStorage.getItem('editor-js')
+
+        if (savedHtml) setHtml(savedHtml)
+        if (savedCss) setCss(savedCss)
+        if (savedJs) setJs(savedJs)
+      } catch (err) {
+        console.error('Error loading from localStorage:', err)
+      }
     }
-  }, [html, css, js])
+  }, [projectId])
+
+  // Save to localStorage only if not using a project
+  useEffect(() => {
+    if (!projectId) {
+      try {
+        localStorage.setItem('editor-html', html)
+        localStorage.setItem('editor-css', css)
+        localStorage.setItem('editor-js', js)
+      } catch (err) {
+        console.error('Error saving to localStorage:', err)
+      }
+    }
+  }, [html, css, js, projectId])
 
   // State for AI prompt
   const [aiPrompt, setAiPrompt] = useState('')
@@ -59,13 +74,16 @@ export default function CodeEditor() {
 
       switch (codeType) {
         case 'html':
-          code = html
+          // If HTML is empty, use a filler template
+          code = html.trim() ? html : '<div>\n  <h1>Hello World</h1>\n  <p>Start editing to see some magic happen!</p>\n</div>'
           break
         case 'css':
-          code = css
+          // If CSS is empty, use a filler template
+          code = css.trim() ? css : 'body {\n  font-family: sans-serif;\n  margin: 0;\n  padding: 20px;\n}'
           break
         case 'js':
-          code = js
+          // If JS is empty, use a filler template
+          code = js.trim() ? js : '// Add your JavaScript here\nconsole.log("Hello from Dreamer!");'
           break
         default:
           throw new Error('Invalid code type')
@@ -80,7 +98,8 @@ export default function CodeEditor() {
           code,
           changes: prompt,
           changesWanted: prompt,
-          codeType
+          codeType,
+          projectId // Include projectId if available
         }),
       })
 
@@ -106,41 +125,66 @@ export default function CodeEditor() {
 
     const { codeType } = suggestions
 
-    // If all suggestions are selected, we can just apply the entire new code
-    // This is more reliable than applying line by line
+    // If there are suggestions to apply
     if (acceptedSuggestions.length > 0) {
-      // Get the current code
-      let currentCode = codeType === 'html' ? html : codeType === 'css' ? css : js
+      // Check if we're dealing with a complete code replacement (empty starting code)
+      const isCompleteReplacement = acceptedSuggestions.length === 1 &&
+                                   acceptedSuggestions[0].lineNumber === 1 &&
+                                   acceptedSuggestions[0].oldCode === '' &&
+                                   acceptedSuggestions[0].explanation === 'AI generated new code';
 
-      // Create a new array of lines that will be our final code
-      let lines = currentCode.split('\n')
+      if (isCompleteReplacement) {
+        // For complete replacements, just use the new code directly
+        const newCode = acceptedSuggestions[0].newCode;
 
-      // Sort suggestions by line number in ascending order
-      const sortedSuggestions = [...acceptedSuggestions].sort((a, b) => a.lineNumber - b.lineNumber)
-
-      // Apply each suggestion
-      sortedSuggestions.forEach(suggestion => {
-        if (suggestion.lineNumber > 0 && suggestion.lineNumber <= lines.length + 1) {
-          // If the line number is within range, replace it
-          if (suggestion.lineNumber <= lines.length) {
-            lines[suggestion.lineNumber - 1] = suggestion.newCode
-          } else {
-            // If it's a new line at the end
-            lines.push(suggestion.newCode)
-          }
+        // Update the appropriate state
+        if (codeType === 'html') {
+          setHtml(newCode)
+        } else if (codeType === 'css') {
+          setCss(newCode)
+        } else if (codeType === 'js') {
+          setJs(newCode)
         }
-      })
+      } else {
+        // For partial changes, apply line by line
+        // Get the current code
+        let currentCode = codeType === 'html' ? html : codeType === 'css' ? css : js
 
-      // Join the lines back into a single string
-      const updatedCode = lines.join('\n')
+        // Create a new array of lines that will be our final code
+        let lines = currentCode.split('\n')
 
-      // Update the appropriate state
-      if (codeType === 'html') {
-        setHtml(updatedCode)
-      } else if (codeType === 'css') {
-        setCss(updatedCode)
-      } else if (codeType === 'js') {
-        setJs(updatedCode)
+        // Sort suggestions by line number in ascending order
+        const sortedSuggestions = [...acceptedSuggestions].sort((a, b) => a.lineNumber - b.lineNumber)
+
+        // Apply each suggestion
+        sortedSuggestions.forEach(suggestion => {
+          if (suggestion.lineNumber > 0) {
+            // If the line number is beyond the current length, add empty lines to fill the gap
+            while (suggestion.lineNumber > lines.length + 1) {
+              lines.push('')
+            }
+
+            // If the line number is within range, replace it
+            if (suggestion.lineNumber <= lines.length) {
+              lines[suggestion.lineNumber - 1] = suggestion.newCode
+            } else {
+              // If it's a new line at the end
+              lines.push(suggestion.newCode)
+            }
+          }
+        })
+
+        // Join the lines back into a single string
+        const updatedCode = lines.join('\n')
+
+        // Update the appropriate state
+        if (codeType === 'html') {
+          setHtml(updatedCode)
+        } else if (codeType === 'css') {
+          setCss(updatedCode)
+        } else if (codeType === 'js') {
+          setJs(updatedCode)
+        }
       }
     }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 
 // Dynamically import CodeEditor to avoid SSR issues
 const CodeEditor = dynamic(() => import('../components/CodeEditor'), {
@@ -24,10 +25,15 @@ export default function Home() {
       </Head>
 
       <header className="bg-gradient-to-r from-purple-900 via-indigo-800 to-blue-900 text-white p-2 shadow-lg">
-        <div className="flex items-center">
-          <div className="mr-2 text-yellow-400">✨</div>
-          <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 to-yellow-500">Dreamer</h1>
-          <span className="ml-2 text-xs opacity-80">AI Code Editor</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="mr-2 text-yellow-400">✨</div>
+            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 to-yellow-500">Dreamer</h1>
+            <span className="ml-2 text-xs opacity-80">AI Code Editor</span>
+          </div>
+          <Link href="/dashboard" className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-md text-sm transition-colors">
+            Dashboard
+          </Link>
         </div>
       </header>
 

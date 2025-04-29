@@ -7,7 +7,9 @@ A mobile-compatible online web editor for HTML, CSS, and JavaScript with code sa
 - Edit HTML, CSS, and JavaScript in separate tabs
 - Live preview of your code
 - Mobile-responsive design
-- Local storage for saving your code
+- Project dashboard for managing multiple projects
+- Usage statistics tracking
+- Auto-save functionality for projects
 - AI-powered code suggestions with Magic Loop AI
 - Accept or reject suggested changes
 
@@ -63,3 +65,12 @@ The editor is designed to be fully functional on mobile devices with:
 - Responsive layout that adapts to screen size
 - Touch-friendly controls
 - Optimized editor experience for smaller screens
+
+## Dashboard
+
+The project includes a dashboard for managing your code projects:
+- Create, edit, and delete projects
+- View usage statistics
+- Track AI usage over time
+- Auto-save functionality
+- Easy navigation between projects
