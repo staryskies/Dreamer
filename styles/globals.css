@@ -115,9 +115,40 @@ body {
   transition: all 0.3s ease;
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 #1f2937;
+}
+
 /* Mobile optimizations */
 @media (max-width: 768px) {
   html {
     font-size: 14px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
   }
 }
