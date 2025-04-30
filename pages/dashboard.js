@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { format } from 'date-fns'
+import '../styles/globals.css'
 
 export default function Dashboard() {
   const router = useRouter()
