@@ -116,28 +116,28 @@ export default function ProjectEditor() {
   }
   
   return (
-    <div className="min-h-screen flex flex-col bg-gray-900 text-white">
+    <div className="h-screen w-screen flex flex-col">
       <Head>
         <title>{project.name} - Dreamer</title>
-        <meta name="description" content="Dreamer AI Code Editor" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" />
       </Head>
-      
-      <header className="bg-gray-800 shadow-md">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+
+      <header className="bg-gradient-to-r from-purple-900 via-indigo-800 to-blue-900 text-white p-2 shadow-lg">
+        <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <span className="text-xl font-bold gilded-text mr-2">✨</span>
-            <h1 className="text-xl font-bold gilded-text">{project.name}</h1>
+            <div className="mr-2 text-yellow-400">✨</div>
+            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 to-yellow-500">{project.name}</h1>
             {saveMessage && (
               <span className="ml-4 text-sm text-green-400 bg-green-900 bg-opacity-30 px-2 py-1 rounded animate-pulse">
                 {saveMessage}
               </span>
             )}
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <button
               onClick={() => handleSave(project.html, project.css, project.js)}
-              className={`px-3 py-1.5 text-sm rounded smooth-transition ${
+              className={`px-3 py-1 text-sm rounded transition-all duration-200 ${
                 isSaving
                   ? 'bg-gray-600 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500'
@@ -146,14 +146,14 @@ export default function ProjectEditor() {
             >
               {isSaving ? 'Saving...' : 'Save Project'}
             </button>
-            <Link href="/dashboard" className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded text-sm">
+            <Link href="/dashboard" className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-md text-sm transition-colors">
               Dashboard
             </Link>
           </div>
         </div>
       </header>
-      
-      <main className="flex-1 flex flex-col h-[calc(100vh-4rem)]">
+
+      <main className="flex-1 overflow-hidden">
         <CodeEditor
           initialHtml={project.html}
           initialCss={project.css}
@@ -162,6 +162,10 @@ export default function ProjectEditor() {
           projectId={project.id}
         />
       </main>
+
+      <footer className="bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900 text-white p-1 text-center text-xs">
+        <p className="opacity-80">Dreamer <span className="text-yellow-400">✨</span> Powered by Magic Loop AI</p>
+      </footer>
     </div>
   )
 }
