@@ -13,6 +13,7 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
   const [css, setCss] = useState(initialCss || DEFAULT_CSS)
   const [js, setJs] = useState(initialJs || DEFAULT_JS)
   const [activeTab, setActiveTab] = useState('html')
+  const [aiPrompt, setAiPrompt] = useState('')
 
   // State for Magic Loop suggestions
   const [suggestions, setSuggestions] = useState(null)
@@ -59,9 +60,6 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
       }
     }
   }, [html, css, js, projectId])
-
-  // State for AI prompt
-  const [aiPrompt, setAiPrompt] = useState('')
 
   // Get suggestions from Magic Loop AI
   const getSuggestions = async (codeType) => {
@@ -244,54 +242,57 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
   }
 
   return (
-    <div className="h-full flex flex-col" style={{animation: 'fadeIn 0.5s ease-out'}}>
-      {/* Top Bar with Tabs */}
-      <div className="flex bg-gray-900 text-white shadow-md">
+    <div className="h-full flex flex-col bg-gray-900">
+      {/* Tab Navigation */}
+      <div className="flex bg-gray-800 border-b border-gray-700">
         <button
-          className={`px-3 py-2 text-sm smooth-transition ${activeTab === 'html'
-            ? 'bg-gray-800 border-b-2 gilded-text font-medium'
-            : 'hover:bg-gray-800'}`}
           onClick={() => handleTabChange('html')}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === 'html'
+              ? 'text-yellow-400 border-b-2 border-yellow-400'
+              : 'text-gray-400 hover:text-gray-300'
+          }`}
         >
           HTML
         </button>
         <button
-          className={`px-3 py-2 text-sm smooth-transition ${activeTab === 'css'
-            ? 'bg-gray-800 border-b-2 gilded-text font-medium'
-            : 'hover:bg-gray-800'}`}
           onClick={() => handleTabChange('css')}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === 'css'
+              ? 'text-yellow-400 border-b-2 border-yellow-400'
+              : 'text-gray-400 hover:text-gray-300'
+          }`}
         >
           CSS
         </button>
         <button
-          className={`px-3 py-2 text-sm smooth-transition ${activeTab === 'js'
-            ? 'bg-gray-800 border-b-2 gilded-text font-medium'
-            : 'hover:bg-gray-800'}`}
           onClick={() => handleTabChange('js')}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === 'js'
+              ? 'text-yellow-400 border-b-2 border-yellow-400'
+              : 'text-gray-400 hover:text-gray-300'
+          }`}
         >
-          JS
+          JavaScript
         </button>
-      </div>
-
-      {/* AI Prompt Input */}
-      <div className="flex p-2 bg-gray-800 text-white shadow-md gilded-border">
-        <input
-          type="text"
-          placeholder="✨ Ask Dreamer to enhance your code (e.g., 'add a dark mode toggle')"
-          className="flex-1 px-3 py-1.5 text-sm bg-gray-900 border border-gray-700 rounded-l focus:outline-none focus:ring-1 focus:ring-yellow-500 smooth-transition"
-          value={aiPrompt}
-          onChange={(e) => setAiPrompt(e.target.value)}
-        />
-        <button
-          className={`px-3 py-1.5 text-sm rounded-r smooth-transition ${isLoading
-            ? 'bg-gray-600 cursor-not-allowed'
-            : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500'}`}
-          onClick={() => getSuggestions(activeTab)}
-          disabled={isLoading}
-          style={{boxShadow: isLoading ? 'none' : '0 0 10px rgba(79, 70, 229, 0.4)'}}
-        >
-          {isLoading ? 'Dreaming...' : '✨ Get AI Suggestions'}
-        </button>
+        
+        {/* AI Prompt Input */}
+        <div className="flex-1 flex items-center px-4">
+          <input
+            type="text"
+            value={aiPrompt}
+            onChange={(e) => setAiPrompt(e.target.value)}
+            placeholder="Enter your prompt for AI suggestions..."
+            className="flex-1 bg-gray-700 text-gray-200 px-3 py-1 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          />
+          <button
+            onClick={() => getSuggestions(activeTab)}
+            disabled={isLoading}
+            className="ml-2 px-3 py-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-md text-sm text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? 'Loading...' : 'Get AI Suggestions'}
+          </button>
+        </div>
       </div>
 
       {/* Main Content Area */}
