@@ -129,7 +129,7 @@ export default function ProjectEditor() {
             <span className="text-xl font-bold gilded-text mr-2">✨</span>
             <h1 className="text-xl font-bold gilded-text">{project.name}</h1>
             {saveMessage && (
-              <span className="ml-4 text-sm text-green-400 bg-green-900 bg-opacity-30 px-2 py-1 rounded">
+              <span className="ml-4 text-sm text-green-400 bg-green-900 bg-opacity-30 px-2 py-1 rounded animate-pulse">
                 {saveMessage}
               </span>
             )}
@@ -141,7 +141,7 @@ export default function ProjectEditor() {
                 isSaving
                   ? 'bg-gray-600 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500'
-              }`}
+              } ${saveMessage ? 'animate-pulse' : ''}`}
               disabled={isSaving}
             >
               {isSaving ? 'Saving...' : 'Save Project'}
@@ -153,7 +153,7 @@ export default function ProjectEditor() {
         </div>
       </header>
       
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col h-[calc(100vh-4rem)]">
         <CodeEditor
           initialHtml={project.html}
           initialCss={project.css}

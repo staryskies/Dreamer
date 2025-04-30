@@ -74,7 +74,6 @@ export default function Dashboard() {
 
       // Add the new project to the list
       setProjects([...projects, data.project])
-
       // Navigate to the editor with the new project
       router.push(`/editor/${data.project.id}`)
     } catch (err) {
