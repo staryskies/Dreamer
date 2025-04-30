@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, error }) {
+export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, error, onDirectApply }) {
   const [selectedSuggestions, setSelectedSuggestions] = useState([])
 
   // Toggle selection of a suggestion
@@ -69,21 +69,30 @@ export default function MagicLoopSuggestions({ suggestions, onApply, onCancel, e
         </h3>
         <div>
           {suggestions && suggestions.length > 0 && (
-            <button
-              onClick={toggleAll}
-              className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 rounded-md mr-2 text-xs smooth-transition"
-              style={{boxShadow: '0 0 8px rgba(79, 70, 229, 0.3)'}}
-            >
-              {selectedSuggestions.length === suggestions.length ? 'Deselect All' : 'Select All'}
-            </button>
+            <>
+              <button
+                onClick={toggleAll}
+                className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 rounded-md mr-2 text-xs smooth-transition"
+                style={{boxShadow: '0 0 8px rgba(79, 70, 229, 0.3)'}}
+              >
+                {selectedSuggestions.length === suggestions.length ? 'Deselect All' : 'Select All'}
+              </button>
+              <button
+                onClick={onDirectApply}
+                className="px-3 py-1 rounded-md mr-2 text-xs smooth-transition bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500"
+                style={{boxShadow: '0 0 8px rgba(168, 85, 247, 0.3)'}}
+              >
+                Apply Directly
+              </button>
+              <button
+                onClick={handleApply}
+                className="px-3 py-1 rounded-md mr-2 text-xs smooth-transition bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500"
+                style={{boxShadow: '0 0 8px rgba(16, 185, 129, 0.3)'}}
+              >
+                {selectedSuggestions.length === 0 ? 'Apply All' : `Apply (${selectedSuggestions.length})`}
+              </button>
+            </>
           )}
-          <button
-            onClick={handleApply}
-            className="px-3 py-1 rounded-md mr-2 text-xs smooth-transition bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500"
-            style={{boxShadow: '0 0 8px rgba(16, 185, 129, 0.3)'}}
-          >
-            {selectedSuggestions.length === 0 ? 'Apply All' : `Apply (${selectedSuggestions.length})`}
-          </button>
           <button
             onClick={onCancel}
             className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-md text-xs smooth-transition"

@@ -99,7 +99,8 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
           changes: prompt,
           changesWanted: prompt,
           codeType,
-          projectId // Include projectId if available
+          projectId,
+          directApply: false // Default to false for normal operation
         }),
       })
 
@@ -110,12 +111,57 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
       const data = await response.json()
       setSuggestions({
         codeType,
-        suggestions: data.suggestions
+        suggestions: data.suggestions,
+        rawResponse: data.rawResponse // Store the raw response for direct application
       })
     } catch (err) {
       setError(err.message)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  // Directly apply the raw response without parsing
+  const handleDirectApply = async () => {
+    if (!suggestions) return
+
+    const { codeType, rawResponse } = suggestions
+
+    try {
+      const response = await fetch('/api/magic-loop', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: codeType === 'html' ? html : codeType === 'css' ? css : js,
+          changes: aiPrompt || 'Improve this code',
+          codeType,
+          projectId,
+          directApply: true,
+          rawResponse // Pass the raw response for direct application
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to apply changes directly')
+      }
+
+      const data = await response.json()
+      
+      // Update the appropriate state with the directly applied code
+      if (codeType === 'html') {
+        setHtml(data.modifiedCode)
+      } else if (codeType === 'css') {
+        setCss(data.modifiedCode)
+      } else if (codeType === 'js') {
+        setJs(data.modifiedCode)
+      }
+
+      // Clear suggestions after direct application
+      setSuggestions(null)
+    } catch (err) {
+      setError(err.message)
     }
   }
 
@@ -285,6 +331,7 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
               onApply={applySuggestions}
               onCancel={() => setSuggestions(null)}
               error={error}
+              onDirectApply={handleDirectApply}
             />
           ) : (
             <Preview html={html} css={css} js={js} />

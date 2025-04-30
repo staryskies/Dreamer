@@ -18,10 +18,15 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true)
+      setError(null)
       try {
         // Fetch projects
         const projectsRes = await fetch('/api/projects')
         const projectsData = await projectsRes.json()
+
+        if (!projectsData.success) {
+          throw new Error(projectsData.error || 'Failed to load projects')
+        }
 
         // Fetch usage stats
         const usageRes = await fetch('/api/usage')
@@ -30,8 +35,8 @@ export default function Dashboard() {
         setProjects(projectsData.projects || [])
         setUsageStats(usageData)
       } catch (err) {
-        setError('Failed to load dashboard data')
-        console.error(err)
+        setError(err.message || 'Failed to load dashboard data')
+        console.error('Dashboard error:', err)
       } finally {
         setIsLoading(false)
       }
@@ -45,10 +50,12 @@ export default function Dashboard() {
     e.preventDefault()
 
     if (!newProjectName.trim()) {
+      setError('Please enter a project name')
       return
     }
 
     setIsCreating(true)
+    setError(null)
 
     try {
       const res = await fetch('/api/projects', {
@@ -61,7 +68,7 @@ export default function Dashboard() {
 
       const data = await res.json()
 
-      if (!res.ok) {
+      if (!data.success) {
         throw new Error(data.error || 'Failed to create project')
       }
 
@@ -71,7 +78,8 @@ export default function Dashboard() {
       // Clear the input
       setNewProjectName('')
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'Failed to create project')
+      console.error('Create project error:', err)
     } finally {
       setIsCreating(false)
     }
@@ -162,7 +170,10 @@ export default function Dashboard() {
       <main className="container mx-auto px-4 py-8">
         {error && (
           <div className="bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6">
-            <p>{error}</p>
+            <div className="flex items-center">
+              <span className="text-red-300 mr-2">⚠️</span>
+              <p>{error}</p>
+            </div>
           </div>
         )}
 

@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { code, changes, codeType, projectId } = req.body
+    const { code, changes, codeType, projectId, directApply, rawResponse } = req.body
 
     if (!code) {
       return res.status(400).json({ error: 'Missing required code field' })
@@ -14,6 +14,13 @@ export default async function handler(req, res) {
 
     // Track API usage
     trackUsage(projectId)
+
+    // If directApply is true, use the raw response directly
+    if (directApply && rawResponse) {
+      return res.status(200).json({
+        modifiedCode: rawResponse.modifiedCode || rawResponse.code
+      })
+    }
 
     // Call Magic Loop API with the simplified endpoint
     const url = 'https://magicloops.dev/api/loop/3d4346c0-56b5-49d4-9144-04ef31c603e1/run'
@@ -39,7 +46,10 @@ export default async function handler(req, res) {
     // Process the response to match our expected format
     const suggestions = processMagicLoopResponse(data, code)
 
-    return res.status(200).json({ suggestions })
+    return res.status(200).json({ 
+      suggestions,
+      rawResponse: data // Include the raw response for direct application
+    })
   } catch (error) {
     console.error('Error calling Magic Loop API:', error)
     return res.status(500).json({ error: error.message })
@@ -60,12 +70,11 @@ function processMagicLoopResponse(response, originalCode) {
       // If the code is wrapped in markdown code blocks, extract it
       const codeBlockMatch = newCode.match(/```(?:html|css|js|javascript)?\s*([\s\S]*?)\s*```/);
       if (codeBlockMatch && codeBlockMatch[1]) {
-        newCode = codeBlockMatch[1];
+        newCode = codeBlockMatch[1].trim();
       }
 
       // If original code is empty or just whitespace, treat the entire response as new code
       if (!originalCode.trim()) {
-        // Return the entire new code as a single suggestion
         return [{
           lineNumber: 1,
           oldCode: '',
@@ -93,8 +102,19 @@ function processMagicLoopResponse(response, originalCode) {
         }
       }
 
+      // If we have suggestions, return them
       if (suggestions.length > 0) {
         return suggestions;
+      }
+
+      // If no suggestions were found but the code is different, return a single suggestion with the entire new code
+      if (originalCode !== newCode) {
+        return [{
+          lineNumber: 1,
+          oldCode: originalCode,
+          newCode: newCode,
+          explanation: 'AI generated new code'
+        }];
       }
     }
 
@@ -104,7 +124,6 @@ function processMagicLoopResponse(response, originalCode) {
 
       // If original code is empty or just whitespace, treat the entire response as new code
       if (!originalCode.trim()) {
-        // Return the entire new code as a single suggestion
         return [{
           lineNumber: 1,
           oldCode: '',
@@ -132,8 +151,19 @@ function processMagicLoopResponse(response, originalCode) {
         }
       }
 
+      // If we have suggestions, return them
       if (suggestions.length > 0) {
         return suggestions;
+      }
+
+      // If no suggestions were found but the code is different, return a single suggestion with the entire new code
+      if (originalCode !== newCode) {
+        return [{
+          lineNumber: 1,
+          oldCode: originalCode,
+          newCode: newCode,
+          explanation: 'AI generated new code'
+        }];
       }
     }
 
