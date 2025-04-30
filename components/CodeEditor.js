@@ -25,7 +25,7 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
     if (onSave) {
       const saveTimer = setTimeout(() => {
         onSave(html, css, js)
-      }, 2000) // Auto-save after 2 seconds of inactivity
+      }, 1000) // Auto-save after 1 second of inactivity
 
       return () => clearTimeout(saveTimer)
     }
@@ -244,37 +244,39 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
   return (
     <div className="h-full flex flex-col bg-gray-900">
       {/* Tab Navigation */}
-      <div className="flex bg-gray-800 border-b border-gray-700">
-        <button
-          onClick={() => handleTabChange('html')}
-          className={`px-4 py-2 text-sm font-medium ${
-            activeTab === 'html'
-              ? 'text-yellow-400 border-b-2 border-yellow-400'
-              : 'text-gray-400 hover:text-gray-300'
-          }`}
-        >
-          HTML
-        </button>
-        <button
-          onClick={() => handleTabChange('css')}
-          className={`px-4 py-2 text-sm font-medium ${
-            activeTab === 'css'
-              ? 'text-yellow-400 border-b-2 border-yellow-400'
-              : 'text-gray-400 hover:text-gray-300'
-          }`}
-        >
-          CSS
-        </button>
-        <button
-          onClick={() => handleTabChange('js')}
-          className={`px-4 py-2 text-sm font-medium ${
-            activeTab === 'js'
-              ? 'text-yellow-400 border-b-2 border-yellow-400'
-              : 'text-gray-400 hover:text-gray-300'
-          }`}
-        >
-          JavaScript
-        </button>
+      <div className="flex bg-gray-800 border-b border-gray-700 shadow-lg">
+        <div className="flex">
+          <button
+            onClick={() => handleTabChange('html')}
+            className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
+              activeTab === 'html'
+                ? 'text-yellow-400 border-b-2 border-yellow-400 bg-gray-900'
+                : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            HTML
+          </button>
+          <button
+            onClick={() => handleTabChange('css')}
+            className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
+              activeTab === 'css'
+                ? 'text-yellow-400 border-b-2 border-yellow-400 bg-gray-900'
+                : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            CSS
+          </button>
+          <button
+            onClick={() => handleTabChange('js')}
+            className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
+              activeTab === 'js'
+                ? 'text-yellow-400 border-b-2 border-yellow-400 bg-gray-900'
+                : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            JavaScript
+          </button>
+        </div>
         
         {/* AI Prompt Input */}
         <div className="flex-1 flex items-center px-4">
@@ -282,24 +284,23 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
             type="text"
             value={aiPrompt}
             onChange={(e) => setAiPrompt(e.target.value)}
-            placeholder="Enter your prompt for AI suggestions..."
-            className="flex-1 bg-gray-700 text-gray-200 px-3 py-1 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            placeholder="✨ Ask Dreamer to enhance your code..."
+            className="flex-1 bg-gray-700 text-gray-200 px-3 py-1.5 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-200 placeholder-gray-400"
           />
           <button
             onClick={() => getSuggestions(activeTab)}
             disabled={isLoading}
-            className="ml-2 px-3 py-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-md text-sm text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="ml-2 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-md text-sm text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
           >
-            {isLoading ? 'Loading...' : 'Get AI Suggestions'}
+            {isLoading ? '✨ Dreaming...' : '✨ Get AI Suggestions'}
           </button>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col md:flex-row">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Editor Section */}
-        <div className="w-full md:w-1/2 h-1/2 md:h-full bg-gray-900 smooth-transition"
-             style={{animation: 'slideIn 0.3s ease-out'}}>
+        <div className="w-full md:w-1/2 h-full bg-gray-900 border-r border-gray-700">
           {activeTab === 'html' && (
             <CodeMirrorEditor
               value={html}
@@ -324,8 +325,7 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
         </div>
 
         {/* Right Panel */}
-        <div className="w-full md:w-1/2 h-1/2 md:h-full border-t md:border-t-0 md:border-l border-gray-700 bg-gray-900 smooth-transition"
-             style={{animation: 'slideIn 0.3s ease-out 0.1s both'}}>
+        <div className="w-full md:w-1/2 h-full bg-gray-900">
           {suggestions ? (
             <MagicLoopSuggestions
               suggestions={suggestions.suggestions}
