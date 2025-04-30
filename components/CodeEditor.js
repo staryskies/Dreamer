@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import MonacoEditor from 'react-monaco-editor'
+import Editor from '@monaco-editor/react'
 import Preview from './Preview'
 import MagicLoopSuggestions from './MagicLoopSuggestions'
 
@@ -202,7 +202,7 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
           {/* Editor */}
           <div className="flex-1 flex flex-col">
             <div className="flex-1 overflow-hidden">
-              <MonacoEditor
+              <Editor
                 height="100%"
                 language={files[activeFile]?.language}
                 value={files[activeFile]?.content}

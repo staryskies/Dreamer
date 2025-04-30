@@ -20,6 +20,8 @@ const nextConfig = {
   experimental: {
     esmExternals: 'loose',
   },
+  // Configure Monaco Editor
+  transpilePackages: ['@monaco-editor/react'],
 };
 
 module.exports = nextConfig;
