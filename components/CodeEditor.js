@@ -279,19 +279,19 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
                 type="text"
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="Enter your prompt..."
-                className="px-3 py-1 rounded bg-gray-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="✨ Ask Dreamer to enhance your code..."
+                className="w-64 px-4 py-2 rounded bg-gray-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
                 onClick={() => getSuggestions(activeTab)}
                 disabled={isLoading}
-                className={`px-3 py-1 rounded text-sm transition-all duration-200 ${
+                className={`px-4 py-2 rounded text-sm transition-all duration-200 ${
                   isLoading
                     ? 'bg-gray-600 cursor-not-allowed'
                     : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500'
                 } text-white shadow-md`}
               >
-                {isLoading ? 'Loading...' : 'Get AI Suggestions'}
+                {isLoading ? '✨ Dreaming...' : '✨ Get AI Suggestions'}
               </button>
             </div>
           </div>
@@ -309,9 +309,48 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
           </div>
         </div>
 
-        {/* Preview Section */}
+        {/* Right Panel */}
         <div className="flex-1 h-full border-l border-gray-700">
-          <Preview html={html} css={css} js={js} />
+          {suggestions ? (
+            <div className="h-full flex flex-col">
+              <div className="bg-gray-800 text-white px-3 py-2 flex justify-between items-center shadow-md">
+                <h3 className="text-sm gilded-text">✨ AI Suggestions</h3>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleDirectApply()}
+                    className="px-3 py-1 rounded text-sm bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white shadow-md transition-all duration-200"
+                  >
+                    Auto Accept
+                  </button>
+                  <button
+                    onClick={() => setSuggestions(null)}
+                    className="px-3 py-1 rounded text-sm bg-gray-700 hover:bg-gray-600 text-white transition-all duration-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              <div className="flex-1 overflow-auto p-4 bg-gray-900">
+                {suggestions.suggestions.map((suggestion, index) => (
+                  <div key={index} className="mb-4 p-3 bg-gray-800 rounded-lg">
+                    <div className="text-sm text-gray-300 mb-2">
+                      {suggestion.explanation}
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => applySuggestions([suggestion])}
+                        className="px-2 py-1 text-xs bg-green-600 hover:bg-green-500 rounded text-white transition-all duration-200"
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <Preview html={html} css={css} js={js} />
+          )}
         </div>
       </div>
     </div>
