@@ -126,18 +126,18 @@ export default function ProjectEditor() {
       <header className="bg-gradient-to-r from-purple-900 via-indigo-800 to-blue-900 text-white p-2 shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="mr-2 text-yellow-400">✨</div>
-            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 to-yellow-500">{project.name}</h1>
+            <div className="mr-2 text-yellow-400 text-2xl">✨</div>
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 to-yellow-500">{project.name}</h1>
             {saveMessage && (
-              <span className="ml-4 text-sm text-green-400 bg-green-900 bg-opacity-30 px-2 py-1 rounded animate-pulse">
+              <span className="ml-4 text-base text-green-400 bg-green-900 bg-opacity-30 px-3 py-1.5 rounded animate-pulse">
                 {saveMessage}
               </span>
             )}
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <button
               onClick={() => handleSave(project.html, project.css, project.js)}
-              className={`px-3 py-1 text-sm rounded transition-all duration-200 ${
+              className={`px-4 py-2 text-base rounded transition-all duration-200 ${
                 isSaving
                   ? 'bg-gray-600 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500'
@@ -146,7 +146,7 @@ export default function ProjectEditor() {
             >
               {isSaving ? 'Saving...' : 'Save Project'}
             </button>
-            <Link href="/dashboard" className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-md text-sm transition-colors">
+            <Link href="/dashboard" className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-md text-base transition-colors">
               Dashboard
             </Link>
           </div>
@@ -163,7 +163,7 @@ export default function ProjectEditor() {
         />
       </main>
 
-      <footer className="bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900 text-white p-1 text-center text-xs">
+      <footer className="bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900 text-white p-2 text-center text-sm">
         <p className="opacity-80">Dreamer <span className="text-yellow-400">✨</span> Powered by Magic Loop AI</p>
       </footer>
     </div>
