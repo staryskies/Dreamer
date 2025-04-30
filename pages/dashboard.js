@@ -75,8 +75,8 @@ export default function Dashboard() {
       // Add the new project to the list
       setProjects([...projects, data.project])
 
-      // Clear the input
-      setNewProjectName('')
+      // Navigate to the editor with the new project
+      router.push(`/editor/${data.project.id}`)
     } catch (err) {
       setError(err.message || 'Failed to create project')
       console.error('Create project error:', err)
@@ -158,12 +158,38 @@ export default function Dashboard() {
             <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 to-yellow-500">Dreamer</h1>
             <span className="ml-2 text-gray-200">Dashboard</span>
           </div>
-          <Link
-            href="/"
+          <button
+            onClick={async () => {
+              const defaultName = `Project ${projects.length + 1}`
+              setNewProjectName(defaultName)
+              try {
+                const res = await fetch('/api/projects', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ name: defaultName }),
+                })
+
+                const data = await res.json()
+
+                if (!data.success) {
+                  throw new Error(data.error || 'Failed to create project')
+                }
+
+                // Add the new project to the list
+                setProjects([...projects, data.project])
+                // Navigate to the editor with the new project
+                router.push(`/editor/${data.project.id}`)
+              } catch (err) {
+                setError(err.message || 'Failed to create project')
+                console.error('Create project error:', err)
+              }
+            }}
             className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-md text-sm transition-all duration-300 hover:shadow-lg hover:shadow-indigo-900/30"
           >
             New Project
-          </Link>
+          </button>
         </div>
       </header>
 
