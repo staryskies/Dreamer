@@ -13,7 +13,14 @@ export default function Preview({ html, css, js }) {
         </head>
         <body>
           ${html}
-          <script>${js}</script>
+          <script>
+            // Replace alert with console.log
+            const originalAlert = window.alert;
+            window.alert = function(message) {
+              console.log('Alert:', message);
+            };
+            ${js}
+          </script>
         </body>
       </html>
     `
@@ -35,8 +42,7 @@ export default function Preview({ html, css, js }) {
         <h3 className="text-sm gilded-text">✨ Preview</h3>
         <button
           onClick={refreshPreview}
-          className="px-2 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded text-xs smooth-transition"
-          style={{boxShadow: '0 0 8px rgba(79, 70, 229, 0.3)'}}
+          className="px-2 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded text-xs transition-all duration-200"
         >
           Refresh
         </button>
@@ -48,11 +54,10 @@ export default function Preview({ html, css, js }) {
           srcDoc={getHtmlContent()}
           title="preview"
           className="w-full h-full border-none relative z-10"
-          sandbox="allow-scripts"
+          sandbox="allow-scripts allow-modals"
           style={{
             resize: 'both',
-            overflow: 'auto',
-            animation: 'fadeIn 0.3s ease-out'
+            overflow: 'auto'
           }}
         />
       </div>

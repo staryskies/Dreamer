@@ -236,107 +236,82 @@ export default function CodeEditor({ initialHtml, initialCss, initialJs, onSave,
     setSuggestions(null)
   }
 
-  // Handle tab switching
-  const handleTabChange = (tab) => {
-    setActiveTab(tab)
-  }
-
   return (
-    <div className="h-full flex flex-col bg-gray-900">
-      {/* Tab Navigation */}
-      <div className="flex bg-gray-800 border-b border-gray-700 shadow-lg">
-        <div className="flex">
-          <button
-            onClick={() => handleTabChange('html')}
-            className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
-              activeTab === 'html'
-                ? 'text-yellow-400 border-b-2 border-yellow-400 bg-gray-900'
-                : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            HTML
-          </button>
-          <button
-            onClick={() => handleTabChange('css')}
-            className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
-              activeTab === 'css'
-                ? 'text-yellow-400 border-b-2 border-yellow-400 bg-gray-900'
-                : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            CSS
-          </button>
-          <button
-            onClick={() => handleTabChange('js')}
-            className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
-              activeTab === 'js'
-                ? 'text-yellow-400 border-b-2 border-yellow-400 bg-gray-900'
-                : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            JavaScript
-          </button>
-        </div>
-        
-        {/* AI Prompt Input */}
-        <div className="flex-1 flex items-center px-4">
-          <input
-            type="text"
-            value={aiPrompt}
-            onChange={(e) => setAiPrompt(e.target.value)}
-            placeholder="✨ Ask Dreamer to enhance your code..."
-            className="flex-1 bg-gray-700 text-gray-200 px-3 py-1.5 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-200 placeholder-gray-400"
-          />
-          <button
-            onClick={() => getSuggestions(activeTab)}
-            disabled={isLoading}
-            className="ml-2 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-md text-sm text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
-          >
-            {isLoading ? '✨ Dreaming...' : '✨ Get AI Suggestions'}
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
+    <div className="flex flex-col h-full">
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Editor Section */}
-        <div className="w-full md:w-1/2 h-full bg-gray-900 border-r border-gray-700">
-          {activeTab === 'html' && (
-            <CodeMirrorEditor
-              value={html}
-              onChange={setHtml}
-              language="html"
+        <div className="flex-1 flex flex-col h-full">
+          <div className="bg-gray-800 text-white px-3 py-2 flex justify-between items-center shadow-md">
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setActiveTab('html')}
+                className={`px-3 py-1 rounded text-sm transition-all duration-200 ${
+                  activeTab === 'html'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
+                    : 'bg-gray-700 hover:bg-gray-600'
+                }`}
+              >
+                HTML
+              </button>
+              <button
+                onClick={() => setActiveTab('css')}
+                className={`px-3 py-1 rounded text-sm transition-all duration-200 ${
+                  activeTab === 'css'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
+                    : 'bg-gray-700 hover:bg-gray-600'
+                }`}
+              >
+                CSS
+              </button>
+              <button
+                onClick={() => setActiveTab('js')}
+                className={`px-3 py-1 rounded text-sm transition-all duration-200 ${
+                  activeTab === 'js'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
+                    : 'bg-gray-700 hover:bg-gray-600'
+                }`}
+              >
+                JavaScript
+              </button>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="Enter your prompt..."
+                className="px-3 py-1 rounded bg-gray-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={() => getSuggestions(activeTab)}
+                disabled={isLoading}
+                className={`px-3 py-1 rounded text-sm transition-all duration-200 ${
+                  isLoading
+                    ? 'bg-gray-600 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500'
+                } text-white shadow-md`}
+              >
+                {isLoading ? 'Loading...' : 'Get AI Suggestions'}
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <textarea
+              value={activeTab === 'html' ? html : activeTab === 'css' ? css : js}
+              onChange={(e) => {
+                const value = e.target.value
+                if (activeTab === 'html') setHtml(value)
+                else if (activeTab === 'css') setCss(value)
+                else setJs(value)
+              }}
+              className="w-full h-full p-4 bg-gray-900 text-white font-mono text-sm focus:outline-none resize-none"
             />
-          )}
-          {activeTab === 'css' && (
-            <CodeMirrorEditor
-              value={css}
-              onChange={setCss}
-              language="css"
-            />
-          )}
-          {activeTab === 'js' && (
-            <CodeMirrorEditor
-              value={js}
-              onChange={setJs}
-              language="javascript"
-            />
-          )}
+          </div>
         </div>
 
-        {/* Right Panel */}
-        <div className="w-full md:w-1/2 h-full bg-gray-900">
-          {suggestions ? (
-            <MagicLoopSuggestions
-              suggestions={suggestions.suggestions}
-              onApply={applySuggestions}
-              onCancel={() => setSuggestions(null)}
-              error={error}
-              onDirectApply={handleDirectApply}
-            />
-          ) : (
-            <Preview html={html} css={css} js={js} />
-          )}
+        {/* Preview Section */}
+        <div className="flex-1 h-full border-l border-gray-700">
+          <Preview html={html} css={css} js={js} />
         </div>
       </div>
     </div>
